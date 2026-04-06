@@ -57,13 +57,14 @@ client.once('ready', async () => {
 
     const button = new ButtonBuilder()
       .setCustomId("create_account")
-      .setLabel("Create Account")
+      .setLabel("Create A New User And Pass")
       .setStyle(ButtonStyle.Primary);
 
     const row = new ActionRowBuilder().addComponents(button);
 
     await channel.send({
-      content: "🔥 To Create A New User And Pass Click Below 👇",
+      content: "🔥 To Create A New User And Pass Click Below
+👇 Create A New User And Pass Button ",
       components: [row]
     });
 

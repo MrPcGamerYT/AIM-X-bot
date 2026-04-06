@@ -15,7 +15,7 @@ const app = express();
 
 // 🔒 ENV CONFIG (Render)
 const TOKEN = process.env.TOKEN;
-const ROLE_ID = "1465560227285041162";
+const ROLE_ID = "1486399127683203163";
 const CHANNEL_ID = "1490567125532803162";
 const GUILD_ID = "1380048834876674108";
 

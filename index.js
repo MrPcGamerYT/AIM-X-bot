@@ -63,7 +63,7 @@ client.once('ready', async () => {
     const row = new ActionRowBuilder().addComponents(button);
 
     await channel.send({
-      content: "🔥 Click below to create your account",
+      content: "🔥 To Create A New User And Pass Click Below 👇",
       components: [row]
     });
 

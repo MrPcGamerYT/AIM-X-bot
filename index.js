@@ -10,6 +10,8 @@ const {
 } = require('discord.js');
 
 const admin = require('firebase-admin');
+const express = require('express'); // Add Express for web server
+const app = express();
 
 // 🔒 ENV CONFIG (Render)
 const TOKEN = process.env.TOKEN;
@@ -23,6 +25,13 @@ const serviceAccount = JSON.parse(process.env.FIREBASE_KEY);
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 });
+
+// 🔹 EXPRESS ROUTE
+app.get('/', (req, res) => res.send('Bot is running!'));
+
+// 🔹 PORT BINDING REQUIRED FOR RENDER FREE
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`🌐 Web server listening on port ${PORT}`));
 
 const client = new Client({
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers]

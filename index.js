@@ -11,29 +11,30 @@ const {
 
 const admin = require('firebase-admin');
 
-// 🔒 CONFIG
-const TOKEN = "MTQ5MDU2NDgwMzkzNTA4MDUzOA.GFAccS.areGKnaUPpmV2psvW8-0fHKLD2AJ-PmSROS_yo";
+// 🔒 ENV CONFIG (Render)
+const TOKEN = process.env.TOKEN;
 const ROLE_ID = "1465560227285041162";
 const CHANNEL_ID = "1490567125532803162";
-const GUILD_ID = "1380048834876674108"; 
+const GUILD_ID = "1380048834876674108";
 
-// 🔥 FIREBASE
+// 🔥 FIREBASE FROM ENV
+const serviceAccount = JSON.parse(process.env.FIREBASE_KEY);
+
 admin.initializeApp({
-  credential: admin.credential.cert(require("./serviceAccount.json"))
+  credential: admin.credential.cert(serviceAccount)
 });
 
 const client = new Client({
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers]
 });
 
-// 🔥 WHEN BOT READY
+// 🔥 READY
 client.once('ready', async () => {
   console.log(`✅ Logged in as ${client.user.tag}`);
 
   try {
     const channel = await client.channels.fetch(CHANNEL_ID);
 
-    // 🧠 Prevent duplicate button spam
     const messages = await channel.messages.fetch({ limit: 10 });
     const alreadyExists = messages.some(msg =>
       msg.author.id === client.user.id &&
@@ -62,10 +63,10 @@ client.once('ready', async () => {
   }
 });
 
-// 🔥 HANDLE INTERACTIONS
+// 🔥 INTERACTIONS
 client.on('interactionCreate', async interaction => {
 
-  // 🔒 BLOCK OTHER SERVERS
+  // 🔒 SERVER LOCK
   if (interaction.guild && interaction.guild.id !== GUILD_ID) {
     return interaction.reply({
       content: "❌ This bot is private.",
@@ -73,7 +74,7 @@ client.on('interactionCreate', async interaction => {
     });
   }
 
-  // BUTTON CLICK
+  // BUTTON
   if (interaction.isButton()) {
     if (interaction.customId === "create_account") {
 
@@ -102,7 +103,7 @@ client.on('interactionCreate', async interaction => {
     }
   }
 
-  // FORM SUBMIT
+  // MODAL SUBMIT
   if (interaction.isModalSubmit()) {
     if (interaction.customId === "account_modal") {
 
@@ -117,7 +118,6 @@ client.on('interactionCreate', async interaction => {
       const email = interaction.fields.getTextInputValue("email");
       const password = interaction.fields.getTextInputValue("password");
 
-      // 🔒 BASIC VALIDATION
       if (password.length < 6) {
         return interaction.reply({
           content: "❌ Password must be at least 6 characters.",
@@ -126,10 +126,7 @@ client.on('interactionCreate', async interaction => {
       }
 
       try {
-        await admin.auth().createUser({
-          email,
-          password
-        });
+        await admin.auth().createUser({ email, password });
 
         await interaction.reply({
           content: "✅ Account created successfully!",
